@@ -14,13 +14,12 @@ Full field-by-field copy is in `LISTING.md`.
 - [ ] Paste the listing copy, upload `assets/icon.png`, `assets/thumbnail.png`, `assets/carousel-1.png`, `assets/carousel-2.png`. Set it to free.
 - [ ] Submit for review and wait for approval (usually a few days, sometimes longer).
 - [ ] After publishing, Figma writes a real `id` into `manifest.json`. Commit it.
-- [ ] Put the Community link in `README.md` (replace `COMMUNITY_LINK_GOES_HERE`).
+- [ ] Put the Community link in `README.md` under Install (replace "listing coming soon").
 
-## 3. Make the GitHub repo public (optional, recommended)
+## 3. Make the GitHub repo public (done)
 
 Lets people check the code themselves, which builds trust for a plugin that touches every page.
 
-- [ ] Note: your commits include your email address (petarceklic@gmail.com), which becomes visible once the repo is public. If you'd rather hide it, tell Claude before making it public.
 - [ ] GitHub > Figma-offline > Settings > Danger Zone > **Change visibility** > Public.
 - [ ] Add a description: "One-click Figma plugin: load every page and image before you go offline." and the topics `figma`, `figma-plugin`, `offline`.
 

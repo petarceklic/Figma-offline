@@ -2,11 +2,23 @@
 
 ![Offline Prep: load every page before you lose Wi-Fi](assets/thumbnail.png)
 
-**Get it on Figma Community:** COMMUNITY_LINK_GOES_HERE
+You're on the plane. Seatbelt sign's off, laptop's open, and you've got three uninterrupted hours to finally get through that redesign. You open the file. Page one loads. You click page two.
 
-A free, one-click Figma plugin that gets a big file ready for offline work (flights, commutes, patchy Wi-Fi). Figma Design files only.
+Unavailable offline.
 
-Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Offline Prep loads **every page** and downloads **every image** in the open file, so it all keeps working when the connection drops.
+Page three, the same. And the few images you can see are blurry smudges.
+
+Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Everything else stays in the cloud, a few hundred kilometres behind you.
+
+**Offline Prep** fixes that with one click before you leave. It loads **every page** and downloads **every image** in the file, so when the Wi-Fi drops, your whole file comes with you.
+
+Free, no settings, and it never touches your design. Works with Figma Design files.
+
+## Install
+
+**Figma Community:** listing coming soon.
+
+**Use it now:** download this repo (Code > Download ZIP), then in the Figma desktop app go to Plugins > Development > **Import plugin from manifest...** and pick `manifest.json`. It's already built, so there's nothing else to do.
 
 ## How to use
 

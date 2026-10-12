@@ -15,7 +15,9 @@ Everything you need for Figma's publish screen. Nothing has been published: you 
 
 ## Description
 
-Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Go offline on a flight or a train and pages you haven't opened are unavailable, and images look blurry.
+You're on the plane, laptop open, three hours to finally get through that redesign. Page one loads. Page two: unavailable offline. And the images you can see are blurry smudges.
+
+Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Everything else stays in the cloud.
 
 Offline Prep fixes that in one click. Run it while you're still online: it loads every page and downloads every image in the file, then tells you when you're ready.
 
