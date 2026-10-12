@@ -4,6 +4,28 @@
 |------|------|---------------------|--------|-------|
 | Baseline (no plugin) | | | | |
 | A: pages | | | | |
+| B: images, fly-through | | | | |
+| C: images, fetch data | | | | |
+| D: 1 hour asleep offline | | | | |
+| E: largest file | | | | |
+| F: two files | | | | |
+
+## Simulated tests (2026-10-12, fake Figma API, not real Figma)
+
+All passed: page loading with progress; one failing page reported without stopping the rest; fly-through visits frames (and frames inside sections) and restores page and view; cancel and close mid-fly-through both restore the view; fetch mode finds and fetches unique images; settings and unticked pages remembered after reopening; quick prepare; prepared-recently list across two files; light and dark theme; panel layout with everything expanded.
+
+## Real-Figma test plan
+
+Use **duplicates** of real, large, image-heavy files, in the Figma desktop app. Restart Figma before each test.
+
+- **A, pages:** open the file, stay on page 1, run Offline Prep with Images = Skip. Wi-Fi off. Open every page, move a layer, edit text. Wi-Fi on, check edits sync. *If this fails, image warm-up doesn't matter: the core idea doesn't work.*
+- **B, fly-through:** run with Images = Fly through, 1.5s. Wi-Fi off. Zoom to 100% and 200% on image-heavy frames on several pages. Sharp, blurry or missing?
+- **C, fetch data:** same as B with Images = Fetch image data.
+- **D, endurance:** after preparing, Wi-Fi off, close the laptop for an hour, wake it, recheck pages and images.
+- **E, scale:** run on your largest file. Note load time and whether Figma slows down or crashes.
+- **F, two files:** prepare two files in two tabs (try Quick prepare on the second). Wi-Fi off, check both.
+
+Whichever of B or C keeps images sharp stays; the other gets removed. If neither works, image warm-up is removed and the checklist says images may be blurry offline.
 
 ## Decisions
 
