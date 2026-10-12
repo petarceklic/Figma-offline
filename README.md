@@ -20,6 +20,12 @@ Free, no settings, and it never touches your design. Works with Figma Design fil
 
 **Use it now:** download this repo (Code > Download ZIP), then in the Figma desktop app go to Plugins > Development > **Import plugin from manifest...** and pick `manifest.json`. It's already built, so there's nothing else to do.
 
+<p>
+  <img src="assets/carousel-1.png" width="32%" alt="Your file's boarding pass">
+  <img src="assets/carousel-2.png" width="32%" alt="No more unavailable offline: before and after">
+  <img src="assets/carousel-3.png" width="32%" alt="Pre-flight checklist">
+</p>
+
 ## How to use
 
 1. Open the file while you're online.
