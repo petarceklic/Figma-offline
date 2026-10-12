@@ -3,12 +3,7 @@
   "id": "REPLACE_WITH_ID_FROM_FIGMA",
   "api": "1.0.0",
   "main": "dist/code.js",
-  "ui": "ui.html",
   "editorType": ["figma"],
   "documentAccess": "dynamic-page",
-  "networkAccess": { "allowedDomains": ["none"] },
-  "menu": [
-    { "name": "Open Offline Prep", "command": "open" },
-    { "name": "Quick prepare (all pages, no images)", "command": "quick" }
-  ]
+  "networkAccess": { "allowedDomains": ["none"] }
 }

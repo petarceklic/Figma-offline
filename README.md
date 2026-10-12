@@ -1,21 +1,25 @@
 # Offline Prep
 
-A Figma plugin that loads every page of a large file so it's all available offline (flights, commutes, patchy Wi-Fi). Figma Design files only.
+A one-click Figma plugin that gets a big file ready for offline work (flights, commutes, patchy Wi-Fi). Figma Design files only.
 
-**Status:** feature-complete, not yet tested inside real Figma. All logic has been tested against a simulated Figma API. See `TEST_RESULTS.md` for the test plan.
+Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Offline Prep loads **every page** and downloads **every image** in the open file, so it all keeps working when the connection drops.
 
-## Features
+## How to use
 
-- **Prepare for offline:** loads every ticked page (all by default) with live progress, cancel, and a summary listing any pages that failed.
-- **Images (experimental):**
-  - *Skip:* fastest. Images may look blurry offline.
-  - *Fetch image data:* asks Figma for every image's data. Doesn't move your view.
-  - *Fly through every frame:* zooms to each top-level frame (and frames inside sections) for 1, 1.5 or 3 seconds so Figma loads sharp images. Your page and view are restored afterwards, even if you cancel or close the plugin.
-- **Quick prepare:** Plugins > Offline Prep > Quick prepare loads all pages with no panel. Handy when you're prepping several files.
-- **Prepared recently:** the panel lists the last 10 files you prepared and when.
-- **Remembers:** image mode, time per frame, and the pages you unticked in each file.
-- **Pre-flight checklist** for things a plugin can't fix.
-- Read-only, no network access, light and dark theme.
+1. Open the file while you're online.
+2. Run **Offline Prep** from the plugins menu. There's nothing to set.
+3. Watch the progress toasts ("Loading page 12 of 44", "Downloading image 96 of 212") until you see **Ready for offline**.
+4. Keep that tab open. Figma can't reopen files offline.
+
+Taking several files? Run it once in each and keep every tab open.
+
+To stop it early, click **Cancel** on Figma's "Running Offline Prep" message.
+
+## What it doesn't do
+
+- It never edits your file or moves your view.
+- It has no network access and stores nothing.
+- It can't make library search, plugin installs, or fonts you haven't installed work offline. Those are Figma limits.
 
 ## Build
 
@@ -26,36 +30,25 @@ npm run build
 
 `npm run watch` rebuilds on save. `npm run lint` runs Figma's ESLint rules, which catch APIs that break under `dynamic-page`.
 
-## Install in Figma (desktop app)
+## Install for development (Figma desktop app)
 
-1. Open any Figma Design file in the **desktop app**.
-2. Menu > Plugins > Development > **Import plugin from manifest...**
-3. Pick `manifest.json` in this folder.
-4. Run it: Plugins > Development > Offline Prep > **Open Offline Prep** (or **Quick prepare**).
-
-## Usage
-
-1. Open the file while online and run Offline Prep.
-2. Untick pages you don't need (helps if a huge file is slow or runs out of memory).
-3. Choose an image option, click **Prepare for offline**, and wait for the summary. During the fly-through, don't touch the canvas.
-4. Repeat in every file you're taking. Keep all their tabs open.
+1. Open any Figma Design file in the desktop app.
+2. Plugins > Development > **Import plugin from manifest...** and pick `manifest.json` in this folder.
+3. Run it from the plugins menu. Figma reads `dist/code.js` fresh each run, so rebuilds are picked up without re-importing.
 
 ## Project layout
 
 ```
-manifest.json      plugin manifest (dynamic-page, no network, two menu commands)
-src/code.ts        main thread: page loading, image warm-up, storage, messaging
-ui.html            panel UI (inline CSS/JS, Figma theme variables)
+manifest.json      plugin manifest (dynamic-page, no network, no UI)
+src/code.ts        everything: load pages, find and download images, report
 dist/code.js       build output, referenced by the manifest
 assets/            listing images; regenerate with `python3 assets/src/build.py` (needs Google Chrome)
 LISTING.md         Community listing copy and data security answers
-TEST_RESULTS.md    test plan and results log
+TEST_RESULTS.md    test log
 ```
 
 ## Known limitations
 
-- Files can't be reopened offline, so keep each file's tab open.
-- Library search/insert, plugin installs and fonts that aren't installed locally don't work offline. No plugin can fix these.
-- Whether plugin-loaded pages and warmed-up images survive going offline is unconfirmed until tested (see `TEST_RESULTS.md`).
-- Very large files may hit Figma's per-tab memory limit (about 2 GB). Untick pages if that happens.
-- A plugin only runs in the open file, so multiple files need one run each.
+- Very large files may hit Figma's per-tab memory limit (about 2 GB).
+- A plugin only runs in the open file, so each file needs its own run.
+- Images are downloaded via `getBytesAsync()`. Whether that keeps them sharp offline still needs a real test (see `TEST_RESULTS.md`).
