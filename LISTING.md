@@ -10,7 +10,7 @@ Everything you need for Figma's publish screen. Nothing has been published: you 
 - **Price:** Free (once paid it can't go free again, so keep it free)
 - **Icon:** `assets/icon.png` (128 x 128)
 - **Thumbnail:** `assets/thumbnail.png` (1920 x 1080)
-- **Carousel:** `assets/carousel-1.png`, `assets/carousel-2.png`
+- **Carousel:** `assets/carousel-1.png` (boarding pass), `assets/carousel-2.png` (before/after), `assets/carousel-3.png` (pre-flight checklist)
 - **Demo video/GIF (optional):** a 10 second screen recording of you running it on a real file.
 
 ## Description
