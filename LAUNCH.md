@@ -20,8 +20,8 @@ Full field-by-field copy is in `LISTING.md`.
 
 Lets people check the code themselves, which builds trust for a plugin that touches every page.
 
-- [ ] GitHub > Figma-offline > Settings > Danger Zone > **Change visibility** > Public.
-- [ ] Add a description: "One-click Figma plugin: load every page and image before you go offline." and the topics `figma`, `figma-plugin`, `offline`.
+- [x] Repo made public.
+- [x] Description and topics set.
 
 ## 4. Record a short demo
 
@@ -34,7 +34,15 @@ A 10 to 15 second screen recording does far more on Twitter than a still image.
 
 ## 5. Tweet
 
-Wait until the Community listing is live. Use the demo video, or `assets/thumbnail.png` if you skip the video.
+**Now (links to GitHub)**
+
+> Heading to Vietnam, opened my Figma file mid-flight to get some work done. First page loaded. Every other page: "unavailable offline."
+>
+> Surprised there's no real fix for this, so I built one. Free plugin, one click before you fly, and it loads every page and image in your file.
+>
+> ✈️ github.com/petarceklic/Figma-offline
+
+**Later, once the Community listing is live** (swap in the link). Use the demo video, or `assets/thumbnail.png` if you skip the video.
 
 **Option A (short)**
 

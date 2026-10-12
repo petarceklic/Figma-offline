@@ -102,7 +102,9 @@ async function main(): Promise<void> {
   const summary = `${loaded}/${pages.length} pages and ${plural(images, 'image')} in ${seconds}s`;
   if (failed.length) {
     console.warn('Offline Prep failures:', failed);
-    show(`Done with problems: ${summary}. Failed: ${failed.map((f) => f.name).join(', ')}`, {
+    const names = failed.slice(0, 3).map((f) => f.name).join(', ');
+    const more = failed.length > 3 ? ` and ${failed.length - 3} more` : '';
+    show(`Done with problems: ${summary}. Failed: ${names}${more}`, {
       error: true,
       timeout: 15000,
     });

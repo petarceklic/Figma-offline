@@ -44,13 +44,7 @@ npm install
 npm run build
 ```
 
-`npm run watch` rebuilds on save. `npm run lint` runs Figma's ESLint rules, which catch APIs that break under `dynamic-page`.
-
-## Install for development (Figma desktop app)
-
-1. Open any Figma Design file in the desktop app.
-2. Plugins > Development > **Import plugin from manifest...** and pick `manifest.json` in this folder.
-3. Run it from the plugins menu. Figma reads `dist/code.js` fresh each run, so rebuilds are picked up without re-importing.
+`npm run watch` rebuilds on save. `npm run lint` runs Figma's ESLint rules, which catch APIs that break under `dynamic-page`. Import `manifest.json` as described under Install; Figma reads `dist/code.js` fresh on every run, so rebuilds are picked up without re-importing.
 
 ## Project layout
 
@@ -67,7 +61,7 @@ TEST_RESULTS.md    test log
 
 - Very large files may hit Figma's per-tab memory limit (about 2 GB).
 - A plugin only runs in the open file, so each file needs its own run.
-- Images are downloaded via `getBytesAsync()`. Whether that keeps them sharp offline still needs a real test (see `TEST_RESULTS.md`).
+- Pages are confirmed to work offline. Whether downloaded images stay sharp offline is still being tested (see `TEST_RESULTS.md`).
 
 ## Contributing
 
