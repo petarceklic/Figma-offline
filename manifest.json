@@ -1,0 +1,9 @@
+{
+  "name": "Offline Prep",
+  "id": "REPLACE_WITH_ID_FROM_FIGMA",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": { "allowedDomains": ["none"] }
+}
