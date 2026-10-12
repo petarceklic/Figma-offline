@@ -1,6 +1,6 @@
 {
   "name": "Offline Prep",
-  "id": "REPLACE_WITH_ID_FROM_FIGMA",
+  "id": "1691329686679923680",
   "api": "1.0.0",
   "main": "dist/code.js",
   "editorType": ["figma"],

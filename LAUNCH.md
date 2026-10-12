@@ -13,7 +13,7 @@ Full field-by-field copy is in `LISTING.md`.
 - [ ] Figma desktop app: Plugins > Development > Offline Prep > ... > **Publish**.
 - [ ] Paste the listing copy, upload `assets/icon.png`, `assets/thumbnail.png`, `assets/carousel-1.png`, `assets/carousel-2.png`, `assets/carousel-3.png`. Set it to free.
 - [ ] Submit for review and wait for approval (usually a few days, sometimes longer).
-- [ ] After publishing, Figma writes a real `id` into `manifest.json`. Commit it.
+- [x] Real plugin `id` generated and added to `manifest.json`.
 - [ ] Put the Community link in `README.md` under Install (replace "listing coming soon").
 
 ## 3. Make the GitHub repo public (done)
