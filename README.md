@@ -1,6 +1,10 @@
 # Offline Prep
 
-A one-click Figma plugin that gets a big file ready for offline work (flights, commutes, patchy Wi-Fi). Figma Design files only.
+![Offline Prep: load every page before you lose Wi-Fi](assets/thumbnail.png)
+
+**Get it on Figma Community:** COMMUNITY_LINK_GOES_HERE
+
+A free, one-click Figma plugin that gets a big file ready for offline work (flights, commutes, patchy Wi-Fi). Figma Design files only.
 
 Figma only loads the page you're looking at, and only downloads full-quality images for what's on screen. Offline Prep loads **every page** and downloads **every image** in the open file, so it all keeps working when the connection drops.
 
@@ -21,7 +25,7 @@ To stop it early, click **Cancel** on Figma's "Running Offline Prep" message.
 - It has no network access and stores nothing.
 - It can't make library search, plugin installs, or fonts you haven't installed work offline. Those are Figma limits.
 
-## Build
+## Build from source
 
 ```bash
 npm install
@@ -52,3 +56,11 @@ TEST_RESULTS.md    test log
 - Very large files may hit Figma's per-tab memory limit (about 2 GB).
 - A plugin only runs in the open file, so each file needs its own run.
 - Images are downloaded via `getBytesAsync()`. Whether that keeps them sharp offline still needs a real test (see `TEST_RESULTS.md`).
+
+## Contributing
+
+Issues and pull requests are welcome. Please keep it one click.
+
+## License
+
+[MIT](LICENSE)
