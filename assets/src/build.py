@@ -153,7 +153,7 @@ def porthole(w, h):
     return f'''
 <div style="width:{w}px;height:{h}px;border-radius:{w / 2:.0f}px / {w / 2.1:.0f}px;
   background:linear-gradient(160deg,#FFFFFF 0%,#ECE6DC 45%,#D9D1C4 100%);
-  box-shadow:0 50px 100px rgba(60,45,25,.28), inset 0 2px 0 rgba(255,255,255,.9), inset 0 -6px 18px rgba(80,60,30,.18);
+  box-shadow:0 50px 100px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.9), inset 0 -6px 18px rgba(80,60,30,.18);
   position:relative">
   <div style="position:absolute;left:{frame}px;top:{frame}px;width:{inner_w}px;height:{inner_h}px;
     border-radius:{inner_w / 2:.0f}px / {inner_w / 2.15:.0f}px;overflow:hidden;background:{sky};
@@ -173,24 +173,28 @@ def porthole(w, h):
 </div>'''
 
 
+def night_sky(seed, path, glow_x='50%'):
+    return (f'<div class="abs" style="inset:0;background:radial-gradient(1400px 800px at {glow_x} 115%,#4A3B8F 0%,#1B2357 45%,#0A1030 100%)"></div>'
+            + stars(90, 1920, 600, seed, 3, (0.15, 0.7))
+            + flight_path(1920, 1080, path, '2 16', 'rgba(255,255,255,.22)'))
+
+
 THUMB = page(f'''
-<div class="abs" style="inset:0;background:radial-gradient(1200px 900px at 78% 45%,#FBF8F3 0%,#EFE9E0 55%,#E4DCD0 100%)"></div>
-<div class="abs" style="left:0;right:0;top:118px;height:2px;background:rgba(120,100,70,.10)"></div>
-<div class="abs" style="left:0;right:0;bottom:118px;height:2px;background:rgba(120,100,70,.10)"></div>
+{night_sky(31, 'M -40 1010 C 300 960, 600 1040, 900 980 S 1400 1000, 1980 940', '70%')}
 
 <div class="abs" style="left:1150px;top:96px">{porthole(620, 860)}</div>
 <div class="abs" style="left:930px;top:470px">{pages_panel(540, 'ready')}</div>
 
 <div class="abs" style="left:140px;top:0;bottom:0;width:780px;display:flex;flex-direction:column;justify-content:center">
-  <div style="margin-bottom:64px">{logo_lockup(NAVY, 72)}</div>
-  <h1 style="font-size:108px;color:{NAVY}">Your whole file,</h1>
-  <div class="serif" style="font-size:132px;line-height:1;color:{SUNSET};margin-top:4px">at 35,000 feet.</div>
-  <p class="lead" style="font-size:34px;color:{MUTED};margin:44px 0 52px;max-width:640px">
+  <div style="margin-bottom:64px">{logo_lockup('#fff', 72)}</div>
+  <h1 style="font-size:108px;color:#fff">Your whole file,</h1>
+  <div class="serif" style="font-size:132px;line-height:1;color:{GOLD};margin-top:4px">at 35,000 feet.</div>
+  <p class="lead" style="font-size:34px;color:rgba(255,255,255,.7);margin:44px 0 52px;max-width:640px">
     One click before you board loads every page and image. No Wi-Fi needed.</p>
   <div style="display:flex;gap:14px">
-    <span class="chip" style="background:{NAVY};color:#fff">FREE</span>
-    <span class="chip" style="background:rgba(14,26,58,.07);color:{NAVY}">ONE CLICK</span>
-    <span class="chip" style="background:rgba(14,26,58,.07);color:{NAVY}">NEVER EDITS YOUR FILE</span>
+    <span class="chip" style="background:{GOLD};color:{NAVY}">FREE</span>
+    <span class="chip" style="background:rgba(255,255,255,.10);color:#fff">ONE CLICK</span>
+    <span class="chip" style="background:rgba(255,255,255,.10);color:#fff">NEVER EDITS YOUR FILE</span>
   </div>
 </div>
 ''', 1920, 1080)
@@ -249,9 +253,7 @@ def boarding_pass():
 
 
 CAROUSEL_1 = page(f'''
-<div class="abs" style="inset:0;background:radial-gradient(1400px 800px at 50% 115%,#4A3B8F 0%,#1B2357 45%,#0A1030 100%)"></div>
-{stars(90, 1920, 600, 21, 3, (0.15, 0.7))}
-{flight_path(1920, 1080, 'M -40 980 C 400 900, 700 1000, 1100 860 S 1700 700, 1980 760', '2 16', 'rgba(255,255,255,.22)')}
+{night_sky(21, 'M -40 980 C 400 900, 700 1000, 1100 860 S 1700 700, 1980 760')}
 <div class="abs" style="left:0;right:0;top:110px;text-align:center;color:#fff">
   <div class="eyebrow" style="justify-content:center;color:{GOLD}">{plane(26, GOLD, 90)}How it works</div>
   <h1 style="font-size:88px;margin-top:26px">Your file’s <span class="serif" style="font-size:104px;color:{GOLD}">boarding pass.</span></h1>
@@ -269,22 +271,22 @@ def label(text, bg, fg):
 
 
 CAROUSEL_2 = page(f'''
-<div class="abs" style="inset:0;background:linear-gradient(180deg,{CREAM} 0%,#F1EADF 100%)"></div>
-<div class="abs" style="left:0;right:0;top:96px;text-align:center">
-  <h1 style="font-size:92px">No more <span class="serif" style="font-size:108px;color:{SUNSET}">“unavailable offline.”</span></h1>
-  <p class="lead" style="font-size:30px;color:{MUTED};margin:20px auto 0;max-width:1100px">
+{night_sky(42, 'M -40 1020 C 500 960, 800 1060, 1200 990 S 1700 960, 1980 1000')}
+<div class="abs" style="left:0;right:0;top:96px;text-align:center;color:#fff">
+  <h1 style="font-size:92px">No more <span class="serif" style="font-size:108px;color:{GOLD}">“unavailable offline.”</span></h1>
+  <p class="lead" style="font-size:30px;color:rgba(255,255,255,.7);margin:20px auto 0;max-width:1100px">
     Figma only loads the page you’re on. Offline Prep loads the rest.</p>
 </div>
 <div class="abs" style="left:250px;top:370px">
-  {label('WITHOUT', 'rgba(14,26,58,.08)', MUTED)}
-  <div style="opacity:.92">{pages_panel(620, 'before', footer=False)}</div>
+  {label('WITHOUT', 'rgba(255,255,255,.10)', 'rgba(255,255,255,.7)')}
+  <div style="opacity:.85">{pages_panel(620, 'before', footer=False)}</div>
 </div>
-<div class="abs" style="left:928px;top:600px;width:64px;height:64px;border-radius:50%;background:{NAVY};
-  display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(14,26,58,.3)">
-  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+<div class="abs" style="left:928px;top:600px;width:64px;height:64px;border-radius:50%;background:{GOLD};
+  display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(0,0,0,.4)">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="{NAVY}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 </div>
 <div class="abs" style="left:1050px;top:370px">
-  {label('WITH OFFLINE PREP', NAVY, '#fff')}
+  {label('WITH OFFLINE PREP', GOLD, NAVY)}
   {pages_panel(620, 'ready', footer=True)}
 </div>
 ''', 1920, 1080)
@@ -293,7 +295,7 @@ CAROUSEL_2 = page(f'''
 # ---------- carousel 3: pre-flight safety card ----------
 def step(n, title, body, icon_svg):
     return f'''
-<div style="background:#fff;border-radius:28px;padding:40px 36px;box-shadow:0 20px 50px rgba(14,26,58,.10);
+<div style="background:{CREAM};border-radius:28px;padding:40px 36px;box-shadow:0 30px 60px rgba(0,0,0,.35);
   display:flex;flex-direction:column;gap:22px;height:100%">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div style="width:84px;height:84px;border-radius:22px;background:rgba(242,112,74,.12);display:flex;align-items:center;justify-content:center">{icon_svg}</div>
@@ -315,14 +317,13 @@ ICON_FONT = line_icon('<path d="M5 19L11 5h2l6 14M8 14h8"/>')
 ICON_COMP = line_icon('<path d="M12 3l4 4-4 4-4-4zM12 13l4 4-4 4-4-4zM7 8l4 4-4 4-4-4zM17 8l4 4-4 4-4-4z"/>')
 
 CAROUSEL_3 = page(f'''
-<div class="abs" style="inset:0;background:#EEF1F7"></div>
-<div class="abs" style="left:0;top:0;bottom:0;width:22px;background:repeating-linear-gradient(180deg,{SUNSET} 0 60px,{NAVY} 60px 120px)"></div>
-<div class="abs" style="left:140px;right:140px;top:200px;display:flex;justify-content:space-between;align-items:flex-end">
+{night_sky(53, 'M -40 960 C 400 1040, 800 940, 1200 1010 S 1700 1050, 1980 980')}
+<div class="abs" style="left:140px;right:140px;top:200px;display:flex;justify-content:space-between;align-items:flex-end;color:#fff">
   <div>
-    <div class="eyebrow" style="color:{SUNSET}">{plane(26, SUNSET, 90)}Before you board</div>
-    <h1 style="font-size:96px;margin-top:24px">Pre-flight <span class="serif" style="font-size:112px;color:{SUNSET}">checklist.</span></h1>
+    <div class="eyebrow" style="color:{GOLD}">{plane(26, GOLD, 90)}Before you board</div>
+    <h1 style="font-size:96px;margin-top:24px">Pre-flight <span class="serif" style="font-size:112px;color:{GOLD}">checklist.</span></h1>
   </div>
-  <div class="mono" style="font-size:18px;letter-spacing:.16em;color:{MUTED};text-align:right;line-height:1.7">
+  <div class="mono" style="font-size:18px;letter-spacing:.16em;color:rgba(255,255,255,.5);text-align:right;line-height:1.7">
     SAFETY CARD<br>OFFLINE PREP · FIGMA</div>
 </div>
 <div class="abs" style="left:140px;right:140px;top:530px;height:350px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
