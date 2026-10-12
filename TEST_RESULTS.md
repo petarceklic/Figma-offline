@@ -3,7 +3,7 @@
 | Test | Date | File (pages / size) | Result | Notes |
 |------|------|---------------------|--------|-------|
 | Baseline (no plugin) | | | | |
-| A: pages | | | | |
+| A: pages | 2026-10-12 | Real file, 44 pages | **Pass** | Quick prepare, 44/44 loaded in 8.8s. Offline: every page opened, editing worked. Sync after reconnecting and image quality not yet reported. |
 | B: images, fly-through | | | | |
 | C: images, fetch data | | | | |
 | D: 1 hour asleep offline | | | | |
@@ -30,7 +30,8 @@ Whichever of B or C keeps images sharp stays; the other gets removed. If neither
 ## Decisions
 
 - 2026-10-12, U4: target files are Figma Design files, not Slides. `editorType` stays `["figma"]`.
-- 2026-10-12: user chose to skip Test A for now and go ahead with Phase 1. Test A is still needed before publishing.
+- 2026-10-12: user chose to skip Test A for now and go ahead with Phase 1. Test A was run later the same day and passed.
+- 2026-10-12, U1 answered: pages loaded via `page.loadAsync()` are available offline the same as pages clicked into. The core approach works.
 
 ## Research (2026-10-12, no hands-on test)
 
