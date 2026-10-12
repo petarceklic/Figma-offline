@@ -15,6 +15,7 @@ const SWEEP_TYPES = new Set(['FRAME', 'GROUP', 'COMPONENT', 'COMPONENT_SET', 'IN
 let cancelRequested = false;
 let closeRequested = false;
 let running = false;
+let uiOpen = false;
 // ---------- helpers ----------
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -29,9 +30,19 @@ async function dwell(ms) {
 function errorText(err) {
     return err instanceof Error ? err.message : String(err);
 }
+// Quick prepare has no panel, so progress goes to a toast instead.
+let progressToast = null;
 function post(msg) {
-    if (!closeRequested)
+    var _a;
+    if (closeRequested)
+        return;
+    if (uiOpen) {
         figma.ui.postMessage(msg);
+    }
+    else if (msg.type === 'progress' && msg.total) {
+        progressToast === null || progressToast === void 0 ? void 0 : progressToast.cancel();
+        progressToast = figma.notify(`Loading page ${((_a = msg.done) !== null && _a !== void 0 ? _a : 0) + 1} of ${msg.total}: ${msg.label}`, { timeout: Infinity });
+    }
 }
 function contentPages(pageIds) {
     const wanted = pageIds ? new Set(pageIds) : null;
@@ -270,9 +281,19 @@ async function prepare(pageIds, imageMode, dwellMs) {
 async function quickPrepare() {
     const pages = contentPages();
     const start = Date.now();
-    figma.notify(`Loading ${pages.length} pages...`, { timeout: 2000 });
-    const { loaded, failed } = await loadPages(pages);
-    await recordPrepared(loaded, 'off');
+    let result;
+    try {
+        result = await loadPages(pages);
+        await recordPrepared(result.loaded, 'off');
+    }
+    catch (err) {
+        progressToast === null || progressToast === void 0 ? void 0 : progressToast.cancel();
+        figma.notify(`Offline Prep failed: ${errorText(err)}`, { error: true, timeout: 10000 });
+        setTimeout(() => figma.closePlugin(), 300);
+        return;
+    }
+    progressToast === null || progressToast === void 0 ? void 0 : progressToast.cancel();
+    const { loaded, failed } = result;
     const seconds = ((Date.now() - start) / 1000).toFixed(1);
     if (failed.length) {
         figma.notify(`${loaded}/${pages.length} pages loaded in ${seconds}s. Failed: ${failed.map((f) => f.name).join(', ')}`, {
@@ -289,6 +310,7 @@ async function quickPrepare() {
 }
 async function openPanel() {
     figma.showUI(__html__, { width: 360, height: 640, themeColors: true });
+    uiOpen = true;
     figma.ui.onmessage = (msg) => {
         switch (msg.type) {
             case 'prepare':

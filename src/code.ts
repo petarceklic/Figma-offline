@@ -39,6 +39,7 @@ const SWEEP_TYPES = new Set<NodeType>(['FRAME', 'GROUP', 'COMPONENT', 'COMPONENT
 let cancelRequested = false;
 let closeRequested = false;
 let running = false;
+let uiOpen = false;
 
 // ---------- helpers ----------
 
@@ -58,8 +59,17 @@ function errorText(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
-function post(msg: object): void {
-  if (!closeRequested) figma.ui.postMessage(msg);
+// Quick prepare has no panel, so progress goes to a toast instead.
+let progressToast: NotificationHandler | null = null;
+
+function post(msg: { type: string; done?: number; total?: number; label?: string; [key: string]: unknown }): void {
+  if (closeRequested) return;
+  if (uiOpen) {
+    figma.ui.postMessage(msg);
+  } else if (msg.type === 'progress' && msg.total) {
+    progressToast?.cancel();
+    progressToast = figma.notify(`Loading page ${(msg.done ?? 0) + 1} of ${msg.total}: ${msg.label}`, { timeout: Infinity });
+  }
 }
 
 function contentPages(pageIds?: string[]): PageNode[] {
@@ -306,9 +316,18 @@ async function prepare(pageIds: string[], imageMode: ImageMode, dwellMs: number)
 async function quickPrepare(): Promise<void> {
   const pages = contentPages();
   const start = Date.now();
-  figma.notify(`Loading ${pages.length} pages...`, { timeout: 2000 });
-  const { loaded, failed } = await loadPages(pages);
-  await recordPrepared(loaded, 'off');
+  let result;
+  try {
+    result = await loadPages(pages);
+    await recordPrepared(result.loaded, 'off');
+  } catch (err) {
+    progressToast?.cancel();
+    figma.notify(`Offline Prep failed: ${errorText(err)}`, { error: true, timeout: 10000 });
+    setTimeout(() => figma.closePlugin(), 300);
+    return;
+  }
+  progressToast?.cancel();
+  const { loaded, failed } = result;
   const seconds = ((Date.now() - start) / 1000).toFixed(1);
   if (failed.length) {
     figma.notify(`${loaded}/${pages.length} pages loaded in ${seconds}s. Failed: ${failed.map((f) => f.name).join(', ')}`, {
@@ -325,6 +344,7 @@ async function quickPrepare(): Promise<void> {
 
 async function openPanel(): Promise<void> {
   figma.showUI(__html__, { width: 360, height: 640, themeColors: true });
+  uiOpen = true;
 
   figma.ui.onmessage = (msg: UiMessage) => {
     switch (msg.type) {
