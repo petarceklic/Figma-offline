@@ -9,12 +9,13 @@
 
 Full field-by-field copy is in `LISTING.md`.
 
-- [ ] Turn on two-factor authentication on your Figma account.
-- [ ] Figma desktop app: Plugins > Development > Offline Prep > ... > **Publish**.
-- [ ] Paste the listing copy, upload `assets/icon.png`, `assets/thumbnail.png`, `assets/carousel-1.png`, `assets/carousel-2.png`, `assets/carousel-3.png`. Set it to free.
-- [ ] Submit for review and wait for approval (usually a few days, sometimes longer).
+- [x] Turn on two-factor authentication on your Figma account.
+- [x] Figma desktop app: Plugins > Development > Offline Prep > ... > **Publish**.
+- [x] Paste the listing copy, upload `assets/icon.png`, `assets/thumbnail.png`, `assets/carousel-1.png`, `assets/carousel-2.png`, `assets/carousel-3.png`. Set it to free.
+- [x] Submitted for review on 12 Oct 2026: https://www.figma.com/community/plugin/1691329686679923680/offline-prep
+- [ ] Wait for approval (usually a few days, sometimes longer).
 - [x] Real plugin `id` generated and added to `manifest.json`.
-- [ ] Put the Community link in `README.md` under Install (replace "listing coming soon").
+- [x] Community link added to `README.md`.
 
 ## 3. Make the GitHub repo public (done)
 

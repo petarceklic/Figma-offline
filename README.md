@@ -16,9 +16,11 @@ Free, no settings, and it never touches your design. Works with Figma Design fil
 
 ## Install
 
-**Figma Community:** listing coming soon.
+**[Get it on Figma Community →](https://www.figma.com/community/plugin/1691329686679923680/offline-prep)** Open the page and click **Open in…** to run it in any file.
 
-**Use it now:** download this repo (Code > Download ZIP), then in the Figma desktop app go to Plugins > Development > **Import plugin from manifest...** and pick `manifest.json`. It's already built, so there's nothing else to do.
+*(Submitted for review on 12 Oct 2026. If the page isn't live yet, use the option below.)*
+
+**Or run it from source:** download this repo (Code > Download ZIP), then in the Figma desktop app go to Plugins > Development > **Import plugin from manifest...** and pick `manifest.json`. It's already built, so there's nothing else to do.
 
 <p>
   <img src="assets/carousel-1.png" width="32%" alt="Your file's boarding pass">
