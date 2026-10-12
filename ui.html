@@ -7,16 +7,20 @@
     background: var(--figma-color-bg);
   }
   .app { display: flex; flex-direction: column; height: 100vh; }
-  header { padding: 12px 16px 8px; border-bottom: 1px solid var(--figma-color-border); }
-  h1 { font-size: 13px; font-weight: 600; margin: 0 0 2px; }
+  header { flex-shrink: 0; padding: 12px 16px 8px; border-bottom: 1px solid var(--figma-color-border); }
+  h1 {
+    font-size: 13px; font-weight: 600; margin: 0 0 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  h2 { font-size: 11px; font-weight: 600; margin: 0 0 6px; }
   .muted { color: var(--figma-color-text-secondary); }
+  .small { font-size: 11px; }
   .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-  .pages { flex: 1; overflow-y: auto; padding: 4px 0; min-height: 80px; }
+  .pages { flex: 1 1 auto; overflow-y: auto; padding: 4px 0; min-height: 120px; }
   .pages label {
     display: flex; align-items: center; gap: 8px;
-    padding: 4px 16px; cursor: pointer;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    padding: 4px 16px; cursor: pointer; white-space: nowrap;
   }
   .pages label:hover { background: var(--figma-color-bg-hover); }
   .pages .divider {
@@ -24,15 +28,26 @@
     color: var(--figma-color-text-tertiary);
     text-transform: uppercase; letter-spacing: 0.04em;
   }
-  .pages .current { color: var(--figma-color-text-secondary); font-size: 11px; }
+  .pages .current { color: var(--figma-color-text-secondary); font-size: 11px; flex-shrink: 0; }
   .pages span.name { overflow: hidden; text-overflow: ellipsis; }
 
   .links button {
     background: none; border: none; padding: 0; margin-left: 8px;
     color: var(--figma-color-text-brand); font: inherit; cursor: pointer;
   }
+  .links button:disabled { opacity: 0.4; cursor: default; }
 
-  footer { border-top: 1px solid var(--figma-color-border); padding: 12px 16px; }
+  section { flex-shrink: 0; border-top: 1px solid var(--figma-color-border); padding: 10px 16px; }
+  .option { display: flex; gap: 8px; align-items: flex-start; margin-top: 4px; cursor: pointer; }
+  .option input { margin-top: 2px; }
+  .option .hint { display: block; font-size: 11px; color: var(--figma-color-text-secondary); }
+  .dwell { margin: 4px 0 0 24px; display: none; }
+  select {
+    font: inherit; color: var(--figma-color-text); background: var(--figma-color-bg);
+    border: 1px solid var(--figma-color-border); border-radius: 4px; padding: 2px 4px;
+  }
+
+  footer { flex: 0 1 auto; min-height: 0; overflow-y: auto; border-top: 1px solid var(--figma-color-border); padding: 10px 16px 12px; }
   .btn {
     width: 100%; height: 32px; border-radius: 6px; border: none;
     font: inherit; font-weight: 500; cursor: pointer;
@@ -45,24 +60,34 @@
   }
 
   .progress { display: none; }
-  .bar { height: 6px; border-radius: 3px; background: var(--figma-color-bg-secondary); overflow: hidden; margin: 8px 0; }
+  .bar { height: 6px; border-radius: 3px; background: var(--figma-color-bg-secondary); overflow: hidden; margin: 6px 0 8px; }
   .bar > div { height: 100%; width: 0; background: var(--figma-color-bg-brand); transition: width 0.15s; }
-  .progress .btn { margin-top: 4px; }
+  #progress-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .warning {
+    display: none; margin-bottom: 6px; padding: 6px 8px; border-radius: 4px;
+    background: var(--figma-color-bg-warning-tertiary, var(--figma-color-bg-secondary));
+    font-size: 11px;
+  }
 
   .result { display: none; margin-bottom: 10px; }
   .result.ok strong { color: var(--figma-color-text-success); }
   .result.warn strong { color: var(--figma-color-text-warning); }
-  .result ul { margin: 4px 0 0; padding-left: 16px; color: var(--figma-color-text-danger); }
+  .result ul { margin: 4px 0 0; padding-left: 16px; color: var(--figma-color-text-danger); max-height: 80px; overflow-y: auto; }
+  .result p { margin: 2px 0 0; }
 
   details { margin-top: 10px; }
   summary { cursor: pointer; font-weight: 500; }
   .checklist label { display: flex; gap: 8px; align-items: flex-start; margin-top: 6px; cursor: pointer; }
   .checklist input { margin-top: 2px; }
+  .prepared { margin: 6px 0 0; padding: 0; list-style: none; }
+  .prepared li { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+  .prepared li span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prepared li.this-file span:first-child { font-weight: 600; }
 </style>
 
 <div class="app">
   <header>
-    <h1>Offline Prep</h1>
+    <h1 id="file-name">Offline Prep</h1>
     <div class="row">
       <span class="muted" id="stats">Reading pages...</span>
       <span class="links">
@@ -74,6 +99,30 @@
 
   <div class="pages" id="pages"></div>
 
+  <section id="image-options">
+    <h2>Images</h2>
+    <label class="option">
+      <input type="radio" name="images" value="off" checked>
+      <span>Skip<span class="hint">Fastest. Images may look blurry offline.</span></span>
+    </label>
+    <label class="option">
+      <input type="radio" name="images" value="fetch">
+      <span>Fetch image data <span class="muted">(experimental)</span><span class="hint">Asks Figma to download every image. Doesn't move your view.</span></span>
+    </label>
+    <label class="option">
+      <input type="radio" name="images" value="sweep">
+      <span>Fly through every frame <span class="muted">(experimental)</span><span class="hint">Zooms to each frame so Figma loads sharp images. Slow.</span></span>
+    </label>
+    <div class="dwell small" id="dwell-row">
+      Time on each frame
+      <select id="dwell">
+        <option value="1000">1s</option>
+        <option value="1500">1.5s</option>
+        <option value="3000">3s</option>
+      </select>
+    </div>
+  </section>
+
   <footer>
     <div class="result" id="result"></div>
 
@@ -82,22 +131,29 @@
     </div>
 
     <div class="progress" id="progress">
+      <div class="warning" id="sweep-warning">Figma is moving around your file. Don't touch the canvas until it finishes.</div>
       <div class="row">
-        <span id="progress-label">Loading...</span>
+        <span id="progress-label">Starting...</span>
         <span class="muted" id="elapsed">0s</span>
       </div>
       <div class="bar"><div id="bar-fill"></div></div>
       <button class="btn btn-secondary" id="cancel">Cancel</button>
     </div>
 
+    <details id="prepared-box">
+      <summary>Prepared recently</summary>
+      <ul class="prepared small" id="prepared"></ul>
+      <p class="small muted">Every file you want offline needs its own tab, kept open.</p>
+    </details>
+
     <details>
       <summary>Pre-flight checklist</summary>
       <div class="checklist">
         <label><input type="checkbox"> Keep this file's tab open. Files can't be reopened offline.</label>
+        <label><input type="checkbox"> Taking more than one file? Run Offline Prep in each one and keep every tab open.</label>
         <label><input type="checkbox"> Fonts used in the file are installed on this computer.</label>
         <label><input type="checkbox"> Library components you need are already placed in the file. Library search doesn't work offline.</label>
         <label><input type="checkbox"> Prototypes: use Present &gt; options &gt; Make available offline separately.</label>
-        <label><input type="checkbox"> Images may look lower resolution offline.</label>
         <label><input type="checkbox"> Do a quick Wi-Fi-off test before you leave.</label>
       </div>
     </details>
@@ -107,8 +163,20 @@
 <script>
   const $ = (id) => document.getElementById(id);
   let pages = [];
+  let fileName = '';
   let timer = null;
   let startedAt = 0;
+
+  const STEP_NAMES = {
+    pages: 'Loading pages',
+    scan: 'Finding images',
+    fetch: 'Fetching images',
+    sweep: 'Flying through frames',
+  };
+
+  function send(msg) {
+    parent.postMessage({ pluginMessage: msg }, '*');
+  }
 
   function checkboxes() {
     return Array.from(document.querySelectorAll('#pages input[type=checkbox]'));
@@ -118,26 +186,45 @@
     return checkboxes().filter((cb) => cb.checked).map((cb) => cb.value);
   }
 
-  function updatePrepareButton() {
+  function imageMode() {
+    return document.querySelector('input[name=images]:checked').value;
+  }
+
+  function settings() {
+    return { imageMode: imageMode(), dwellMs: Number($('dwell').value) };
+  }
+
+  function formatMs(ms) {
+    const s = Math.round(ms / 1000);
+    return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`;
+  }
+
+  function plural(n, word) {
+    return `${n} ${word}${n === 1 ? '' : 's'}`;
+  }
+
+  function updateControls() {
     const count = selectedIds().length;
     const total = checkboxes().length;
     $('prepare').disabled = count === 0;
     $('prepare').textContent = count === total
       ? 'Prepare for offline'
       : `Prepare ${count} of ${total} pages`;
+    $('dwell-row').style.display = imageMode() === 'sweep' ? 'block' : 'none';
   }
 
-  function renderPages(currentPageId) {
+  function renderPages(currentPageId, deselected) {
+    const skip = new Set(deselected);
     const list = $('pages');
     list.textContent = '';
     for (const page of pages) {
       if (page.isDivider) {
+        // Divider pages are often named with dashes; only show a label if there is text.
+        const text = page.name.replace(/^[\s\-–—*_=]+|[\s\-–—*_=]+$/g, '');
+        if (!text) continue;
         const div = document.createElement('div');
         div.className = 'divider';
-        // Divider pages are often named with dashes; only show a label if there is text.
-        const label = page.name.replace(/^[\s\-–—*_]+|[\s\-–—*_]+$/g, '');
-        if (!label) continue;
-        div.textContent = label;
+        div.textContent = text;
         list.appendChild(div);
         continue;
       }
@@ -145,8 +232,8 @@
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.value = page.id;
-      cb.checked = true;
-      cb.addEventListener('change', updatePrepareButton);
+      cb.checked = !skip.has(page.id);
+      cb.addEventListener('change', updateControls);
       const name = document.createElement('span');
       name.className = 'name';
       name.textContent = page.name;
@@ -162,30 +249,54 @@
 
     const pageCount = pages.filter((p) => !p.isDivider).length;
     const dividerCount = pages.length - pageCount;
-    $('stats').textContent = `${pageCount} page${pageCount === 1 ? '' : 's'}` +
-      (dividerCount ? `, ${dividerCount} divider${dividerCount === 1 ? '' : 's'}` : '');
-    updatePrepareButton();
+    $('stats').textContent = plural(pageCount, 'page') + (dividerCount ? `, ${plural(dividerCount, 'divider')}` : '');
+    updateControls();
+  }
+
+  function timeAgo(at) {
+    const mins = Math.round((Date.now() - at) / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} min ago`;
+    const hours = Math.round(mins / 60);
+    if (hours < 24) return `${hours} h ago`;
+    return `${Math.round(hours / 24)} d ago`;
+  }
+
+  function renderPrepared(list) {
+    const ul = $('prepared');
+    ul.textContent = '';
+    $('prepared-box').style.display = list.length ? 'block' : 'none';
+    for (const f of list) {
+      const li = document.createElement('li');
+      if (f.name === fileName) li.className = 'this-file';
+      const name = document.createElement('span');
+      name.textContent = f.name;
+      const when = document.createElement('span');
+      when.className = 'muted';
+      when.textContent = `${plural(f.pages, 'page')} · ${timeAgo(f.at)}`;
+      li.append(name, when);
+      ul.appendChild(li);
+    }
   }
 
   function setRunning(isRunning) {
     $('idle').style.display = isRunning ? 'none' : 'block';
     $('progress').style.display = isRunning ? 'block' : 'none';
+    $('sweep-warning').style.display = 'none';
     checkboxes().forEach((cb) => (cb.disabled = isRunning));
+    document.querySelectorAll('#image-options input, #image-options select').forEach((el) => (el.disabled = isRunning));
     $('select-all').disabled = isRunning;
     $('select-none').disabled = isRunning;
     clearInterval(timer);
     if (isRunning) {
       startedAt = Date.now();
       $('elapsed').textContent = '0s';
+      $('bar-fill').style.width = '0%';
+      $('progress-label').textContent = 'Starting...';
       timer = setInterval(() => {
         $('elapsed').textContent = formatMs(Date.now() - startedAt);
       }, 500);
     }
-  }
-
-  function formatMs(ms) {
-    const s = Math.round(ms / 1000);
-    return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`;
   }
 
   function showResult(msg) {
@@ -195,11 +306,22 @@
     el.className = 'result ' + (allGood ? 'ok' : 'warn');
 
     const headline = document.createElement('strong');
-    headline.textContent = msg.cancelled
-      ? `Cancelled: ${msg.loaded}/${msg.total} pages loaded.`
-      : `${msg.loaded}/${msg.total} pages loaded in ${formatMs(msg.ms)}.`;
+    const pagesCancelled = msg.cancelled && !msg.images;
+    headline.textContent = pagesCancelled
+      ? `Cancelled. ${msg.loaded}/${msg.total} pages loaded.`
+      : `${msg.loaded}/${msg.total} pages loaded in ${formatMs(msg.pagesMs)}.`;
     el.appendChild(headline);
-    el.append(` ${msg.failed.length} error${msg.failed.length === 1 ? '' : 's'}.`);
+    el.append(` ${plural(msg.failed.length, 'error')}.`);
+
+    if (msg.images) {
+      const p = document.createElement('p');
+      p.className = 'muted';
+      p.textContent = msg.images.mode === 'sweep'
+        ? `Visited ${plural(msg.images.count, 'frame')} in ${formatMs(msg.images.ms)}.`
+        : `Fetched ${plural(msg.images.count, 'image')} in ${formatMs(msg.images.ms)}.`;
+      if (msg.cancelled) p.textContent += ' Image step cancelled.';
+      el.appendChild(p);
+    }
 
     if (msg.failed.length) {
       const ul = document.createElement('ul');
@@ -210,21 +332,33 @@
       }
       el.appendChild(ul);
     }
+
+    if (!pagesCancelled) {
+      const p = document.createElement('p');
+      p.className = 'muted';
+      p.textContent = 'Keep this tab open. Turn Wi-Fi off for a moment to check.';
+      el.appendChild(p);
+    }
     el.style.display = 'block';
   }
 
-  $('select-all').onclick = () => { checkboxes().forEach((cb) => (cb.checked = true)); updatePrepareButton(); };
-  $('select-none').onclick = () => { checkboxes().forEach((cb) => (cb.checked = false)); updatePrepareButton(); };
+  $('select-all').onclick = () => { checkboxes().forEach((cb) => (cb.checked = true)); updateControls(); };
+  $('select-none').onclick = () => { checkboxes().forEach((cb) => (cb.checked = false)); updateControls(); };
+
+  document.querySelectorAll('input[name=images]').forEach((el) =>
+    el.addEventListener('change', () => { updateControls(); send({ type: 'save-settings', settings: settings() }); })
+  );
+  $('dwell').addEventListener('change', () => send({ type: 'save-settings', settings: settings() }));
 
   $('prepare').onclick = () => {
     $('result').style.display = 'none';
     setRunning(true);
-    parent.postMessage({ pluginMessage: { type: 'load-pages', pageIds: selectedIds() } }, '*');
+    send({ type: 'prepare', pageIds: selectedIds(), ...settings() });
   };
 
   $('cancel').onclick = () => {
     $('progress-label').textContent = 'Cancelling...';
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+    send({ type: 'cancel' });
   };
 
   onmessage = (event) => {
@@ -232,16 +366,25 @@
     if (!msg) return;
     if (msg.type === 'init') {
       pages = msg.pages;
-      renderPages(msg.currentPageId);
+      fileName = msg.fileName;
+      $('file-name').textContent = msg.fileName || 'Offline Prep';
+      const radio = document.querySelector(`input[name=images][value="${msg.settings.imageMode}"]`);
+      if (radio) radio.checked = true;
+      $('dwell').value = String(msg.settings.dwellMs);
+      renderPages(msg.currentPageId, msg.deselected);
+      renderPrepared(msg.prepared);
     } else if (msg.type === 'progress') {
       const pct = msg.total ? (msg.done / msg.total) * 100 : 100;
       $('bar-fill').style.width = pct + '%';
-      $('progress-label').textContent = msg.done < msg.total
-        ? `Loading ${msg.done + 1} of ${msg.total}: ${msg.pageName}`
-        : `Loaded ${msg.total} of ${msg.total}`;
-    } else if (msg.type === 'pages-done') {
+      $('sweep-warning').style.display = msg.step === 'sweep' ? 'block' : 'none';
+      const step = STEP_NAMES[msg.step];
+      $('progress-label').textContent = msg.step === 'fetch'
+        ? `${step} ${msg.done}/${msg.total}`
+        : `${step} ${Math.min(msg.done + 1, msg.total)}/${msg.total}: ${msg.label}`;
+    } else if (msg.type === 'done') {
       setRunning(false);
       showResult(msg);
+      renderPrepared(msg.prepared);
     }
   };
 </script>

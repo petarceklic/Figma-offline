@@ -6,5 +6,9 @@
   "ui": "ui.html",
   "editorType": ["figma"],
   "documentAccess": "dynamic-page",
-  "networkAccess": { "allowedDomains": ["none"] }
+  "networkAccess": { "allowedDomains": ["none"] },
+  "menu": [
+    { "name": "Open Offline Prep", "command": "open" },
+    { "name": "Quick prepare (all pages, no images)", "command": "quick" }
+  ]
 }
