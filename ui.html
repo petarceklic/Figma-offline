@@ -1,0 +1,247 @@
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 12px/1.4 Inter, system-ui, -apple-system, sans-serif;
+    color: var(--figma-color-text);
+    background: var(--figma-color-bg);
+  }
+  .app { display: flex; flex-direction: column; height: 100vh; }
+  header { padding: 12px 16px 8px; border-bottom: 1px solid var(--figma-color-border); }
+  h1 { font-size: 13px; font-weight: 600; margin: 0 0 2px; }
+  .muted { color: var(--figma-color-text-secondary); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+  .pages { flex: 1; overflow-y: auto; padding: 4px 0; min-height: 80px; }
+  .pages label {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 16px; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .pages label:hover { background: var(--figma-color-bg-hover); }
+  .pages .divider {
+    padding: 8px 16px 2px; font-size: 11px;
+    color: var(--figma-color-text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .pages .current { color: var(--figma-color-text-secondary); font-size: 11px; }
+  .pages span.name { overflow: hidden; text-overflow: ellipsis; }
+
+  .links button {
+    background: none; border: none; padding: 0; margin-left: 8px;
+    color: var(--figma-color-text-brand); font: inherit; cursor: pointer;
+  }
+
+  footer { border-top: 1px solid var(--figma-color-border); padding: 12px 16px; }
+  .btn {
+    width: 100%; height: 32px; border-radius: 6px; border: none;
+    font: inherit; font-weight: 500; cursor: pointer;
+  }
+  .btn-primary { background: var(--figma-color-bg-brand); color: var(--figma-color-text-onbrand); }
+  .btn-primary:disabled { opacity: 0.4; cursor: default; }
+  .btn-secondary {
+    background: transparent; color: var(--figma-color-text);
+    border: 1px solid var(--figma-color-border);
+  }
+
+  .progress { display: none; }
+  .bar { height: 6px; border-radius: 3px; background: var(--figma-color-bg-secondary); overflow: hidden; margin: 8px 0; }
+  .bar > div { height: 100%; width: 0; background: var(--figma-color-bg-brand); transition: width 0.15s; }
+  .progress .btn { margin-top: 4px; }
+
+  .result { display: none; margin-bottom: 10px; }
+  .result.ok strong { color: var(--figma-color-text-success); }
+  .result.warn strong { color: var(--figma-color-text-warning); }
+  .result ul { margin: 4px 0 0; padding-left: 16px; color: var(--figma-color-text-danger); }
+
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 500; }
+  .checklist label { display: flex; gap: 8px; align-items: flex-start; margin-top: 6px; cursor: pointer; }
+  .checklist input { margin-top: 2px; }
+</style>
+
+<div class="app">
+  <header>
+    <h1>Offline Prep</h1>
+    <div class="row">
+      <span class="muted" id="stats">Reading pages...</span>
+      <span class="links">
+        <button id="select-all">All</button>
+        <button id="select-none">None</button>
+      </span>
+    </div>
+  </header>
+
+  <div class="pages" id="pages"></div>
+
+  <footer>
+    <div class="result" id="result"></div>
+
+    <div id="idle">
+      <button class="btn btn-primary" id="prepare">Prepare for offline</button>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="row">
+        <span id="progress-label">Loading...</span>
+        <span class="muted" id="elapsed">0s</span>
+      </div>
+      <div class="bar"><div id="bar-fill"></div></div>
+      <button class="btn btn-secondary" id="cancel">Cancel</button>
+    </div>
+
+    <details>
+      <summary>Pre-flight checklist</summary>
+      <div class="checklist">
+        <label><input type="checkbox"> Keep this file's tab open. Files can't be reopened offline.</label>
+        <label><input type="checkbox"> Fonts used in the file are installed on this computer.</label>
+        <label><input type="checkbox"> Library components you need are already placed in the file. Library search doesn't work offline.</label>
+        <label><input type="checkbox"> Prototypes: use Present &gt; options &gt; Make available offline separately.</label>
+        <label><input type="checkbox"> Images may look lower resolution offline.</label>
+        <label><input type="checkbox"> Do a quick Wi-Fi-off test before you leave.</label>
+      </div>
+    </details>
+  </footer>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let pages = [];
+  let timer = null;
+  let startedAt = 0;
+
+  function checkboxes() {
+    return Array.from(document.querySelectorAll('#pages input[type=checkbox]'));
+  }
+
+  function selectedIds() {
+    return checkboxes().filter((cb) => cb.checked).map((cb) => cb.value);
+  }
+
+  function updatePrepareButton() {
+    const count = selectedIds().length;
+    const total = checkboxes().length;
+    $('prepare').disabled = count === 0;
+    $('prepare').textContent = count === total
+      ? 'Prepare for offline'
+      : `Prepare ${count} of ${total} pages`;
+  }
+
+  function renderPages(currentPageId) {
+    const list = $('pages');
+    list.textContent = '';
+    for (const page of pages) {
+      if (page.isDivider) {
+        const div = document.createElement('div');
+        div.className = 'divider';
+        // Divider pages are often named with dashes; only show a label if there is text.
+        const label = page.name.replace(/^[\s\-–—*_]+|[\s\-–—*_]+$/g, '');
+        if (!label) continue;
+        div.textContent = label;
+        list.appendChild(div);
+        continue;
+      }
+      const label = document.createElement('label');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = page.id;
+      cb.checked = true;
+      cb.addEventListener('change', updatePrepareButton);
+      const name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = page.name;
+      label.append(cb, name);
+      if (page.id === currentPageId) {
+        const cur = document.createElement('span');
+        cur.className = 'current';
+        cur.textContent = '(current)';
+        label.appendChild(cur);
+      }
+      list.appendChild(label);
+    }
+
+    const pageCount = pages.filter((p) => !p.isDivider).length;
+    const dividerCount = pages.length - pageCount;
+    $('stats').textContent = `${pageCount} page${pageCount === 1 ? '' : 's'}` +
+      (dividerCount ? `, ${dividerCount} divider${dividerCount === 1 ? '' : 's'}` : '');
+    updatePrepareButton();
+  }
+
+  function setRunning(isRunning) {
+    $('idle').style.display = isRunning ? 'none' : 'block';
+    $('progress').style.display = isRunning ? 'block' : 'none';
+    checkboxes().forEach((cb) => (cb.disabled = isRunning));
+    $('select-all').disabled = isRunning;
+    $('select-none').disabled = isRunning;
+    clearInterval(timer);
+    if (isRunning) {
+      startedAt = Date.now();
+      $('elapsed').textContent = '0s';
+      timer = setInterval(() => {
+        $('elapsed').textContent = formatMs(Date.now() - startedAt);
+      }, 500);
+    }
+  }
+
+  function formatMs(ms) {
+    const s = Math.round(ms / 1000);
+    return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`;
+  }
+
+  function showResult(msg) {
+    const el = $('result');
+    el.textContent = '';
+    const allGood = msg.failed.length === 0 && !msg.cancelled;
+    el.className = 'result ' + (allGood ? 'ok' : 'warn');
+
+    const headline = document.createElement('strong');
+    headline.textContent = msg.cancelled
+      ? `Cancelled: ${msg.loaded}/${msg.total} pages loaded.`
+      : `${msg.loaded}/${msg.total} pages loaded in ${formatMs(msg.ms)}.`;
+    el.appendChild(headline);
+    el.append(` ${msg.failed.length} error${msg.failed.length === 1 ? '' : 's'}.`);
+
+    if (msg.failed.length) {
+      const ul = document.createElement('ul');
+      for (const f of msg.failed) {
+        const li = document.createElement('li');
+        li.textContent = `${f.name}: ${f.error}`;
+        ul.appendChild(li);
+      }
+      el.appendChild(ul);
+    }
+    el.style.display = 'block';
+  }
+
+  $('select-all').onclick = () => { checkboxes().forEach((cb) => (cb.checked = true)); updatePrepareButton(); };
+  $('select-none').onclick = () => { checkboxes().forEach((cb) => (cb.checked = false)); updatePrepareButton(); };
+
+  $('prepare').onclick = () => {
+    $('result').style.display = 'none';
+    setRunning(true);
+    parent.postMessage({ pluginMessage: { type: 'load-pages', pageIds: selectedIds() } }, '*');
+  };
+
+  $('cancel').onclick = () => {
+    $('progress-label').textContent = 'Cancelling...';
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+  };
+
+  onmessage = (event) => {
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+    if (msg.type === 'init') {
+      pages = msg.pages;
+      renderPages(msg.currentPageId);
+    } else if (msg.type === 'progress') {
+      const pct = msg.total ? (msg.done / msg.total) * 100 : 100;
+      $('bar-fill').style.width = pct + '%';
+      $('progress-label').textContent = msg.done < msg.total
+        ? `Loading ${msg.done + 1} of ${msg.total}: ${msg.pageName}`
+        : `Loaded ${msg.total} of ${msg.total}`;
+    } else if (msg.type === 'pages-done') {
+      setRunning(false);
+      showResult(msg);
+    }
+  };
+</script>

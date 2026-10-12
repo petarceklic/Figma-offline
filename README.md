@@ -2,7 +2,7 @@
 
 A Figma plugin that loads every page of a large file so it's all available offline (flights, commutes, patchy Wi-Fi).
 
-**Status: Phase 0 spike.** Right now it only loads all pages, shows a toast, and closes. No UI yet. The goal is to confirm that pages loaded by a plugin stay available offline (Test A) before building more.
+**Status: Phase 1 (MVP), untested in Figma.** Pick pages (all by default), click **Prepare for offline**, watch per-page progress, get a summary with any errors, and tick through a pre-flight checklist. Test A hasn't been run yet, so it's still unconfirmed that plugin-loaded pages stay available offline. Research found nothing that confirms or rules it out (see `TEST_RESULTS.md`).
 
 ## Build
 
@@ -20,12 +20,19 @@ npm run build
 3. Pick `manifest.json` in this folder.
 4. Run it: Plugins > Development > **Offline Prep**.
 
+## Usage
+
+1. Open the file while online and run Offline Prep.
+2. Untick pages you don't need (useful if a huge file is slow or runs out of memory).
+3. Click **Prepare for offline** and wait for the summary.
+4. Go through the pre-flight checklist, then keep the tab open.
+
 ## Test A (the gate for Phase 1)
 
 Use a **duplicate** of a real, large file (20+ pages, image-heavy).
 
 1. Quit and relaunch Figma. Open the test file. Stay on page 1.
-2. Run Offline Prep. Wait for the "All N pages loaded" toast. Don't click into any other page.
+2. Run Offline Prep and click **Prepare for offline**. Wait for the summary. Don't click into any other page.
 3. Turn Wi-Fi off.
 4. Open every page. For each: does it render? Can you select, move and edit a layer? Edit text? Duplicate a local component?
 5. Turn Wi-Fi on and confirm the edits sync.
